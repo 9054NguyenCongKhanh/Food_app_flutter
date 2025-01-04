@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:food_app/pages/home_page.dart';
 import '../components/my_button.dart';
 
 import '../components/my_textfield.dart';
@@ -16,7 +17,15 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController emailController = TextEditingController();
 
   final TextEditingController passwordController = TextEditingController();
-
+  void login() {
+    //nagivate to home
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const HomePage(),
+      ),
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,7 +67,7 @@ class _LoginPageState extends State<LoginPage> {
             const SizedBox(height: 10),
             MyButton(
               text: "Đăng nhập",
-              onTap: (){},
+              onTap: login,
             ),
 
             const SizedBox(height: 25),
