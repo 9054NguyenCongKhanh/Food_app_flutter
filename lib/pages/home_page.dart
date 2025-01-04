@@ -1,17 +1,54 @@
 import 'package:flutter/material.dart';
 import 'package:food_app/components/my_current_location.dart';
+import 'package:food_app/components/my_tab_bar.dart';
+import 'package:food_app/models/food.dart';
 import 'package:provider/provider.dart';
 
 import '../components/my_description_box.dart';
 import '../components/my_drawer.dart';
 import '../components/my_sliver_app_bar.dart';
+import '../models/restaurant.dart';
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
-    class _HomePageState extends State<HomePage> {
+    class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
+      //tab controller
+      late TabController _tabController;
+      @override
+      void initState() {
+        super.initState();
+        _tabController =
+                        TabController(length: FoodCategory.values.length, vsync: this);
+      }
+      @override
+      void dispose() {
+        _tabController.dispose();
+        super.dispose();
+      }
+      //sap xep va tra ve danh sach cac mat hang thuoc category cu the
+      List<Food> _filterMenuByCategory(FoodCategory category, List<Food> fullMenu) {
+        return fullMenu.where((food) => food.category == category).toList();
+      }
+      //tra ve danh sach category trong cua hang
+
+      List<Widget> getFoodInThisCategory(List<Food> fullMenu) {
+        return FoodCategory.values.map((category) {
+          List<Food> categoryMenu = _filterMenuByCategory(category, fullMenu);
+
+          return ListView.builder(
+            itemCount: categoryMenu.length,
+            physics: const NeverScrollableScrollPhysics(),
+            itemBuilder: (context, index) {
+              return ListTile(
+                title: Text(categoryMenu[index].name),
+              );
+            },
+          );
+        }).toList();
+      }
       @override
       Widget build(BuildContext context) {
         return Scaffold(
@@ -19,7 +56,7 @@ class HomePage extends StatefulWidget {
             body: NestedScrollView(
               headerSliverBuilder: (context, innerBoxIsScrolled) => [
                 MySliverAppBar(
-                  title: Text('title'),
+                  title: MyTabBar(tabController: _tabController),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
@@ -37,7 +74,12 @@ class HomePage extends StatefulWidget {
                   ),
                 ),
               ],
-              body: Container(color: Colors.blue),
+              body: Consumer<Restaurant>(
+                builder: (context, restaurant, child) => TabBarView(
+                  controller: _tabController,
+                  children: getFoodInThisCategory(restaurant.menu),
+                ),
+              ),
             )
         );
 
