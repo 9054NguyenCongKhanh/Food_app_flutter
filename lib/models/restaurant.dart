@@ -1,4 +1,6 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:food_app/models/cart_item.dart';
 
 import 'food.dart';
 class Restaurant extends ChangeNotifier{
@@ -208,5 +210,84 @@ class Restaurant extends ChangeNotifier{
    //getter
   */
    List<Food> get menu => _menu;
+  //gio hang nguoi dung
+  final List<CartItem> _cart = [];
+  List<CartItem> get cart => _cart;
 
+  //add to cart
+  void addToCart(Food food, List<Addon> selectedAddons) {
+    //tim neu co san item giong voi item da chon
+    CartItem? cartItem = _cart.firstWhereOrNull((item) {
+      //kiem tra neu food co san
+      bool isSameFood = item.food == food;
+
+      //kiem tra su lua chon co trong list
+      bool isSameAddons =
+      ListEquality().equals(item.selectedAddons, selectedAddons);
+
+      return isSameFood && isSameAddons;
+    });
+
+    //neu mat hang ton tai tang so luong  cua no
+    if (cartItem != null) {
+      cartItem.quantity++;
+    }
+
+    //neu khong co them item voi vao gio hang
+    else {
+      _cart.add(
+        CartItem(
+          food: food,
+          selectedAddons: selectedAddons,
+        ),
+      );
+    }
+    notifyListeners();
+  }
+
+  //remove from cart
+  void removeFromCart(CartItem cartItem) {
+    int cartIndex = _cart.indexOf(cartItem);
+
+    if (cartIndex != -1) {
+      if (_cart[cartIndex].quantity > 1) {
+        _cart[cartIndex].quantity--;
+      } else {
+        _cart.removeAt(cartIndex);
+      }
+    }
+    notifyListeners();
+  }
+
+  //get total price of cart
+  double getTotalPrice() {
+    double total = 0.0;
+
+    for (CartItem cartItem in _cart) {
+      double itemtotal = cartItem.food.price;
+
+      for (Addon addon in cartItem.selectedAddons) {
+        itemtotal += addon.price;
+      }
+
+      total += itemtotal * cartItem.quantity;
+    }
+    return total;
+  }
+
+  //get total number of items in cart
+  int getTotalItemCoun() {
+    int totalItemCount = 0;
+
+    for (CartItem cartItem in _cart) {
+      totalItemCount += cartItem.quantity;
+    }
+    return totalItemCount;
+  }
+
+  //clear cart
+  void clearCart() {
+    _cart.clear();
+    notifyListeners();
+  }
 }

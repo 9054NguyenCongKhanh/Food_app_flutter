@@ -9,6 +9,7 @@ import '../components/my_description_box.dart';
 import '../components/my_drawer.dart';
 import '../components/my_sliver_app_bar.dart';
 import '../models/restaurant.dart';
+import 'food_page.dart';
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -47,8 +48,13 @@ class HomePage extends StatefulWidget {
               final food = categoryMenu[index];
               //tra ve UI food
               return FoodTile(
-               food: food,
-                onTap: (){},
+                food: food,
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => FoodPage(food: food),
+                  ),
+                ),
               );
             },
           );
