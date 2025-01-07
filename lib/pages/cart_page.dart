@@ -4,6 +4,8 @@ import 'package:food_app/components/my_cart_tile.dart';
 import 'package:food_app/models/restaurant.dart';
 import 'package:provider/provider.dart';
 
+import 'payment_page.dart';
+
 class CartPage extends StatelessWidget {
   const CartPage({super.key});
 
@@ -79,8 +81,17 @@ class CartPage extends StatelessWidget {
                   ],
                 ),
               ),
-              //nut thanh toan
-              MyButton(onTap: (){}, text: "Thanh toán"),
+
+              //nút thanh toán
+              MyButton(
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const PaymentPage(),
+                  ),
+                ),
+                text: "Đi đến thanh toán",
+              ),
 
               const SizedBox(height: 35),
             ],
